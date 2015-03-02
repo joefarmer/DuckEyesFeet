@@ -4,8 +4,15 @@
 #define SONAR_NUM     2 // Number of sensors.
 #define MAX_DISTANCE 255 // Maximum distance (in cm) to ping.
 #define PING_INTERVAL 100 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
-#define CHANNEL_1_PIN 2
-#define CHANNEL_2_PIN 3
+
+#define CHANNEL_1_PIN   2
+#define CHANNEL_2_PIN   3
+
+#define SONAR_1_TRIG    4
+#define SONAR_1_ECHO    7
+#define SONAR_2_TRIG    8
+#define SONAR_2_ECHO   12
+
 #define MOTOR_1A_PIN    5
 #define MOTOR_1B_PIN    9
 #define MOTOR_2A_PIN    6
@@ -16,11 +23,9 @@ unsigned int cm[SONAR_NUM];         // Where the ping distances are stored.
 uint8_t currentSensor = 0;          // Keeps track of which sensor is active.
 
 NewPing sonar[SONAR_NUM] = {     // Sensor object array.
-  NewPing(4, 7, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
-  NewPing(8, 12, MAX_DISTANCE)
+  NewPing(SONAR_1_TRIG, SONAR_1_ECHO, MAX_DISTANCE), // Each sensor's trigger pin, echo pin, and max distance to ping.
+  NewPing(SONAR_2_TRIG, SONAR_2_ECHO, MAX_DISTANCE)
 };
-
-//assume that pin 32 is receiving PWM input
 
 //micros when the pin goes HIGH
 volatile unsigned long timer_start1;
