@@ -5,8 +5,8 @@
 #define MAX_DISTANCE 255 // Maximum distance (in cm) to ping.
 #define PING_INTERVAL 100 // Milliseconds between sensor pings (29ms is about the min to avoid cross-sensor echo).
 
-#define CHANNEL_1_PIN   2
-#define CHANNEL_2_PIN   3
+#define CHANNEL_1_PIN   0 //pin 2
+#define CHANNEL_2_PIN   1 //pin 3
 
 #define SONAR_1_TRIG    4
 #define SONAR_1_ECHO    7
@@ -17,6 +17,8 @@
 #define MOTOR_1B_PIN    9
 #define MOTOR_2A_PIN    6
 #define MOTOR_2B_PIN   10
+
+#define SONAR_SELECT_PIN  11
 
 unsigned long pingTimer[SONAR_NUM]; // Holds the times when the next ping should happen for each sensor.
 unsigned int cm[SONAR_NUM];         // Where the ping distances are stored.
@@ -129,21 +131,29 @@ void loop() {
   
   //more code for brushed ESC
   if( pulse_time1 <= 1480) {
-    analogWrite(MOTOR_1A_PIN, (1480 - pulse_time1) / 2); //EX 1480-1400= 80/2 = 40/255 %DC = 15 %DC 
+    analogWrite(MOTOR_1A_PIN, constrain((1480 - pulse_time1) / 2, 0, 255)); //EX 1480-1400= 80/2 = 40/255 %DC = 15 %DC 
     analogWrite(MOTOR_1B_PIN, 0); //never run both directions on the same wheel at once. 
   }
   else if(pulse_time1 >= 1520) {
-    analogWrite(MOTOR_1B_PIN, abs(1520 - pulse_time1) / 2); //EX abs(1520 - 1600) = 80/2 = 40/255 %DC = 15 %DC 
+    analogWrite(MOTOR_1B_PIN, constrain(abs(1520 - pulse_time1) / 2, 0, 255)); //EX abs(1520 - 1600) = 80/2 = 40/255 %DC = 15 %DC 
     analogWrite(MOTOR_1A_PIN, 0); //never run both directions on the same wheel at once. 
+  }
+  else {
+    analogWrite(MOTOR_1A_PIN, 0);  
+    analogWrite(MOTOR_1B_PIN, 0);  
   }
   
   if( pulse_time2 <= 1480) {
-    analogWrite(MOTOR_2A_PIN, (1480 - pulse_time2) / 2); //EX 1480-1400= 80/2 = 40/255 %DC = 15 %DC 
+    analogWrite(MOTOR_2A_PIN, constrain((1480 - pulse_time2) / 2, 0, 255)); //EX 1480-1400= 80/2 = 40/255 %DC = 15 %DC 
     analogWrite(MOTOR_2B_PIN, 0); //never run both directions on the same wheel at once. 
   }
   else if(pulse_time2 >= 1520) {
-    analogWrite(MOTOR_2B_PIN, abs(1520 - pulse_time2) / 2); //EX abs(1520 - 1600) = 80/2 = 40/255 %DC = 15 %DC 
+    analogWrite(MOTOR_2B_PIN, constrain(abs(1520 - pulse_time2) / 2, 0, 255)); //EX abs(1520 - 1600) = 80/2 = 40/255 %DC = 15 %DC 
     analogWrite(MOTOR_2A_PIN, 0); //never run both directions on the same wheel at once. 
+  }
+  else {
+    analogWrite(MOTOR_2A_PIN, 0);  
+    analogWrite(MOTOR_2B_PIN, 0);  
   }
    
 }
@@ -155,6 +165,6 @@ void echoCheck() { // If ping received, set the sensor distance to array.
 }
 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
-    analogWrite(11, cm[digitalRead(13) == HIGH]);
+    analogWrite(SONAR_SELECT_PIN, cm[digitalRead(13) == HIGH]);
 }
 
